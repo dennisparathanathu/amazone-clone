@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import {
   BrowserRouter as Router, Switch, Route
@@ -7,10 +7,36 @@ import {
 }from "react-router-dom";
 import Header from "./Header";
 import Home  from "./Home";
-import Checkout from './Checkout'
+import Checkout from './Checkout';
+import Login from './Login';
+import { auth } from './firebase';
 
 
 function App() {
+
+  useEffect(() => {
+    auth.onAuthStateChanged((authUser) => {
+      console.log("The user is",authUser);
+
+      if (authUser){
+
+        dispatchEvent({
+          type: "SET_USER",
+          user: authUser,
+        });
+      }else {
+        dispatchEvent({
+          type: "SET_USER",
+          user: null,
+        });
+      }
+    });
+
+
+  }, []);
+
+
+
   return (
     <Router>
       <div className="app">
@@ -21,7 +47,7 @@ function App() {
             <h1>Checkout</h1>
           </Route>
           <Route path="/login">
-            <h1>Login</h1>
+            <Login/>
           </Route>
           <Route path="/">
             <Header/>

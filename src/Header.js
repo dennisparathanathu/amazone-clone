@@ -4,11 +4,19 @@ import "./Header.css";
 import SearchIcon from '@material-ui/icons/Search';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import {useStateValue} from './StateProvider';
+import {auth} from './firebase';
+
 
 function Header() {
 
-    const [{ basket }] = useStateValue();
+    const [{ basket, user }, dispatch] = useStateValue();
     console.log(basket);
+
+    const handleAuthentication = () => {
+        if (user) {
+            auth.signOut();
+        }
+    }
 
     return (
         <nav className="header">
@@ -28,10 +36,10 @@ function Header() {
             {/* 3 links to be placed*/}
             <div className="header__navbar_links">
                 {/* first link*/}
-                <Link to="/login" className="header__link">
-                    <div className="header_navbar_link1">
-                        <span className="header_navbar_link1_lin1">Hello.sign in</span>
-                        <span className="header_navbar_link1_lin2">Account</span>
+                <Link to={!user && '/login'} className="header__link">
+                    <div onClick={handleAuthentication} className="header_navbar_link1">
+                        <span className="header_navbar_link1_lin1">Hello {!user ? 'Guest' : user.email}</span>
+                        <span className="header_navbar_link1_lin2">{user ? 'Sign Out' : 'Sign In'}</span>
 
                     </div>
                 </Link>
@@ -62,7 +70,7 @@ function Header() {
                     <ShoppingBasketIcon/>
                     {/* number*/}
 
-    <span className="header_navbar_link1_lin2 basket_count">{basket?.legth}</span>
+    <span className="header_navbar_link1_lin2 basket_count">{basket?.length}</span>
 
                 </div>
             </Link>
